@@ -111,6 +111,8 @@ class ConfigDict(OrderedDict):
         elif isinstance(thing, (str, unicode)):
             if thing.endswith('.ini'):
                 return self.merge_ini_file(thing)
+            if thing.endswith('.json'):
+                return self.merge_json_file(thing)
 
             try:
                 return self.merge_json(thing)
@@ -134,8 +136,6 @@ class ConfigDict(OrderedDict):
         Args:
             cfg (dict): dictionary of configuration information to merge
         """
-        for trigger in self._triggers:
-            cfg = trigger.clean(cfg)
         self._merge_dict(cfg)
 
     def merge_configparser(self, cfg):
@@ -191,6 +191,14 @@ class ConfigDict(OrderedDict):
         cfg = json.loads(jsmin(json_string), object_hook=OrderedDict)
         self.merge_dict(cfg)
 
+    def merge_json_file(self, json_filename):
+        """
+        Merge json configuration from a filename.
+
+        """
+        with open(json_filename, 'r') as f:
+            return self.merge_json(f.read())
+
     def merge_yaml(self, yaml):
         """
         merge configuration from a yaml stream
@@ -241,6 +249,8 @@ class ConfigDict(OrderedDict):
             configuration. defaults to True.
         """
         for ext in self._triggers:
+            cleaned = ext.clean(self)
+            self._merge_dict(cleaned)
             ext.configure(self)
 
     ## attribute access ##
