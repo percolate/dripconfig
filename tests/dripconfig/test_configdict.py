@@ -144,6 +144,7 @@ class ConfigDictTestCase(TestCase):
         """)
 
         cd.merge_configparser(cfg)
+        cd.configure()
 
         self.assertEquals(cd.a,11)
         self.assertEquals(cd.z, '99')
@@ -181,12 +182,13 @@ class ConfigDictTestCase(TestCase):
                 'credentials': {'username': 'foo', 'password': 'bar'}
             }
         })
+        cd.configure()
+
         self.assertEquals(cd.some_service.host, 'xyz')
         self.assertEquals(cd.some_service.port, 123)
         self.assertEquals(cd.some_service.pool_size, 5)
         self.assertEquals(cd.some_service.credentials.username, 'foo')
         self.assertEquals(cd.some_service.credentials.password, 'bar')
-
 
         # integer coersion should take care of '123' instead of 123
         cd = ConfigDict()
@@ -200,6 +202,8 @@ class ConfigDictTestCase(TestCase):
                 'credentials': {'username': 'foo', 'password': 'bar'}
             }
         })
+        cd.configure()
+
         self.assertEquals(cd.some_service.host, 'xyz')
         self.assertEquals(cd.some_service.port, 123)
         self.assertEquals(cd.some_service.pool_size, 5)
@@ -210,15 +214,18 @@ class ConfigDictTestCase(TestCase):
         cd.register_trigger(
             SchemaTrigger(schema)
         )
-        # not valid -- pool_size out of range
-        self.assertRaises(MultipleInvalid, cd.merge_dict, {
+        cd.merge_dict({
             'some_service': {
                 'host': 'xyz',
                 'port': 123,
                 'pool_size': 21,
                 'credentials': {'username': 'foo', 'password': 'bar'}
-                }
-            })
+            }
+        })
+
+        # not valid -- pool_size out of range
+        with self.assertRaises(MultipleInvalid):
+            cd.configure()
 
 
 class TestMergeFrom(TestCase):
@@ -231,9 +238,6 @@ class TestMergeFrom(TestCase):
         self.conf_file2 = NamedTemporaryFile(suffix='.ini')
         self.conf_filename2 = self.conf_file2.name
 
-        print self.conf_filename1
-        print self.conf_filename2
-
         self.conf_file1.write(textwrap.dedent(
             """
             [whoa]
@@ -241,7 +245,6 @@ class TestMergeFrom(TestCase):
 
             """
         ))
-        self.conf_file1.flush()
 
         self.conf_file2.write(textwrap.dedent(
             """
@@ -250,6 +253,8 @@ class TestMergeFrom(TestCase):
 
             """
         ))
+
+        self.conf_file1.flush()
         self.conf_file2.flush()
 
     def tearDown(self):
@@ -288,7 +293,7 @@ class TestMergeFrom(TestCase):
         os.environ['DIS_ENVVAR'] = self.conf_filename1
 
         self.cd.merge_from(
-            sources.Argv(1),  # bad source
+            sources.Argv(2),  # bad source
             sources.Filename(self.conf_filename2),
             sources.EnvVar('DIS_ENVVAR'),  # should not get here
         )

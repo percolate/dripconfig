@@ -108,10 +108,10 @@ class ConfigDict(OrderedDict):
             return self.merge_dict(thing)
         elif isinstance(thing, configparser.ConfigParser):
             return self.merge_configparser(thing)
-        elif isinstance(thing, (str, unicode)):
-            if thing.endswith('.ini'):
+        elif isinstance(thing, basestring):
+            if thing.endswith('ini'):
                 return self.merge_ini_file(thing)
-            if thing.endswith('.json'):
+            elif thing.endswith('json'):
                 return self.merge_json_file(thing)
 
             try:
