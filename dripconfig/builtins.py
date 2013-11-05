@@ -4,7 +4,6 @@ dumped some common stuff in here for now.
 
 from logging.config import dictConfig
 
-import statsd
 from voluptuous import Schema, Coerce, Required
 
 from dripconfig.interfaces import ConfigurationTrigger
@@ -71,6 +70,8 @@ class StatsdConfig(ConfigurationTrigger):
         return self.SCHEMA(configuration)
 
     def configure(self, configuration):
+        import statsd
+
         if 'statsd' in configuration:
             statsd.Connection.set_defaults(
                 host=configuration.statsd.host,

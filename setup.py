@@ -5,12 +5,10 @@ except ImportError:
     use_setuptools()
     from setuptools import setup, find_packages
 
-import dripconfig
-
 
 setup(
     name='dripconfig',
-    version=dripconfig.__version__,
+    version='0.1.dev0',
     description="configuration loading utilities for common process setup tasks",
     license="",
     author="Luke Tucker, James O'Beirne",
