@@ -1,6 +1,8 @@
 
 # dripconfig 
 
+![build badge](https://circleci.com/gh/percolate/dripconfig.png?circle-token=80b53a2510ca246c448fd7e65c900b2102cc4e4a)
+
 A tool for doing configuration nicely -- currently in unstable alpha.
 
 This package has helpers for loading configuration and performing common setup
