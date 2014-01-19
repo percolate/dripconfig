@@ -6,10 +6,10 @@ from logging.config import dictConfig
 
 from voluptuous import Schema, Coerce, Required
 
-from dripconfig.interfaces import ConfigurationTrigger
+from dripconfig.interfaces import SchemaBasedTrigger
 
 
-class LoggingConfig(ConfigurationTrigger):
+class LoggingConfig(SchemaBasedTrigger):
     """
     just applies logging configuration via
     logging.dictconfig if it exists.
@@ -23,23 +23,44 @@ class LoggingConfig(ConfigurationTrigger):
         "logging": {
             ... as described in python docs for
             logging.config.dictConfig
-        }
+        },
     }
+
     """
-
-    SCHEMA = Schema({
-        'logging': dict
-    }, extra=True)
-
-    def clean(self, configuration):
-        return self.SCHEMA(configuration)
+    partial_schema = Schema({
+        'logging': dict,
+    })
 
     def configure(self, configuration):
         if 'logging' in configuration:
             dictConfig(configuration.logging)
 
 
-class StatsdConfig(ConfigurationTrigger):
+class SentryConfig(SchemaBasedTrigger):
+    """
+    Configure a raven client to send exceptions to a sentry server.
+
+    {
+        "sentry": {
+            "dsn": "http://asdf:adsf@sentry.whatever.com/",
+        }
+    }
+
+    """
+    partial_schema = Schema({
+        'sentry': {
+            Required('dsn'): basestring,
+        },
+    })
+
+    def configure(self, configuration):
+        if 'sentry' in configuration:
+            from raven.handlers.logging import SentryHandler
+            from raven.conf import setup_logging
+            setup_logging(SentryHandler(configuration.sentry.dsn))
+
+
+class StatsdConfig(SchemaBasedTrigger):
     """
     Statsd configuration handler
 
@@ -57,17 +78,12 @@ class StatsdConfig(ConfigurationTrigger):
     }
 
     """
-
-    # optional statsd section
-    SCHEMA = Schema({
+    partial_schema = Schema({
         'statsd': {
             Required('host'): basestring,
             Required('port', default=8125): Coerce(int),
         },
-    }, extra=True)
-
-    def clean(self, configuration):
-        return self.SCHEMA(configuration)
+    })
 
     def configure(self, configuration):
         import statsd
@@ -81,4 +97,3 @@ class StatsdConfig(ConfigurationTrigger):
 def register_all(config):
     for Trigger in [LoggingConfig, StatsdConfig]:
         config.register_trigger(Trigger())
-
