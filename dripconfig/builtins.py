@@ -83,8 +83,8 @@ class StatsdConfig(SchemaBasedTrigger):
         'statsd': {
             Required('host'): basestring,
             Required('port', default=8125): Coerce(int),
-            Optional('sample_rate', default=1): Coerce(int),
-            Optional('disabled', default=False): bool,
+            Optional('sample_rate'): Coerce(int),
+            Optional('disabled'): bool,
         },
     })
 
