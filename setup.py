@@ -27,7 +27,6 @@ setup(
         ],
     },
     tests_require=[
-        'setuptools>=17.1',
         'mock',
     ],
     dependency_links=[],
