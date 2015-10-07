@@ -81,7 +81,7 @@ class StatsdConfig(SchemaBasedTrigger):
     """
     partial_schema = Schema({
         'statsd': {
-            Required('host'): basestring,
+            Required('host', default='localhost'): basestring,
             Required('port', default=8125): Coerce(int),
             Optional('sample_rate'): Coerce(int),
             Optional('disabled'): bool,
@@ -89,27 +89,8 @@ class StatsdConfig(SchemaBasedTrigger):
     })
 
     def configure(self, configuration):
-        """
-        If statsd is missing from the config, the emission of
-        data will be disabled by default. Otherwise, use the provided defaults,
-        or use the values specified in the config.
-        """
         import statsd
-
-        statsd_in_conf = 'statsd' in configuration
-        defaults = {
-            'host': 'localhost',
-            'port': 8125,
-            'sample_rate': 1,
-            'disabled': not statsd_in_conf
-        }
-
-        if statsd_in_conf:
-            for key in defaults.keys():
-                if hasattr(configuration.statsd, key):
-                    defaults[key] = getattr(configuration.statsd, key)
-
-        statsd.Connection.set_defaults(**defaults)
+        statsd.Connection.set_defaults(**configuration.get('statsd', {}))
 
 
 def register_all(config):
