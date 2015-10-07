@@ -27,7 +27,7 @@ setup(
         ],
     },
     tests_require=[
-        'mock==1.0.1',
+        'mock',
     ],
     dependency_links=[],
     packages=find_packages(exclude=['ez_setup']),
