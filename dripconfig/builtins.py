@@ -4,7 +4,7 @@ dumped some common stuff in here for now.
 
 from logging.config import dictConfig
 
-from voluptuous import Schema, Coerce, Required
+from voluptuous import Schema, Coerce, Required, Optional
 
 from dripconfig.interfaces import SchemaBasedTrigger
 
@@ -68,12 +68,13 @@ class StatsdConfig(SchemaBasedTrigger):
     a section in the configuration of the
     form:
 
-
     {
         "statsd":
         {
             "port": 8129,
-            "host": "graphite.server.net"
+            "host": "graphite.server.net",
+            "sample_rate": 1,
+            "disabled": False
         }
     }
 
@@ -82,16 +83,33 @@ class StatsdConfig(SchemaBasedTrigger):
         'statsd': {
             Required('host'): basestring,
             Required('port', default=8125): Coerce(int),
+            Optional('sample_rate', default=1): Coerce(int),
+            Optional('disabled', default=False): bool,
         },
     })
 
     def configure(self, configuration):
+        """
+        If statsd is missing from the config, the emission of
+        data will be disabled by default. Otherwise, use the provided defaults,
+        or use the values specified in the config.
+        """
         import statsd
 
-        if 'statsd' in configuration:
-            statsd.Connection.set_defaults(
-                host=configuration.statsd.host,
-                port=configuration.statsd.port)
+        statsd_in_conf = 'statsd' in configuration
+        defaults = {
+            'host': 'localhost',
+            'port': 8125,
+            'sample_rate': 1,
+            'disabled': not statsd_in_conf
+        }
+
+        if statsd_in_conf:
+            for key in defaults.keys():
+                if hasattr(configuration.statsd, key):
+                    defaults[key] = getattr(configuration.statsd, key)
+
+        statsd.Connection.set_defaults(**defaults)
 
 
 def register_all(config):
