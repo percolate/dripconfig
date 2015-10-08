@@ -4,7 +4,7 @@ dumped some common stuff in here for now.
 
 from logging.config import dictConfig
 
-from voluptuous import Schema, Coerce, Required
+from voluptuous import Schema, Coerce, Required, Optional, Boolean
 
 from dripconfig.interfaces import SchemaBasedTrigger
 
@@ -68,30 +68,29 @@ class StatsdConfig(SchemaBasedTrigger):
     a section in the configuration of the
     form:
 
-
     {
         "statsd":
         {
             "port": 8129,
-            "host": "graphite.server.net"
+            "host": "graphite.server.net",
+            "sample_rate": 1,
+            "disabled": False
         }
     }
 
     """
     partial_schema = Schema({
         'statsd': {
-            Required('host'): basestring,
+            Required('host', default='localhost'): basestring,
             Required('port', default=8125): Coerce(int),
+            Optional('sample_rate'): Coerce(int),
+            Optional('disabled'): Boolean(basestring),
         },
     })
 
     def configure(self, configuration):
         import statsd
-
-        if 'statsd' in configuration:
-            statsd.Connection.set_defaults(
-                host=configuration.statsd.host,
-                port=configuration.statsd.port)
+        statsd.Connection.set_defaults(**configuration.get('statsd', {}))
 
 
 def register_all(config):
