@@ -4,7 +4,7 @@ dumped some common stuff in here for now.
 
 from logging.config import dictConfig
 
-from voluptuous import Schema, Coerce, Required, Optional, Boolean
+from voluptuous import Schema, Coerce, Required, Optional, Boolean, All, Range
 
 from dripconfig.interfaces import SchemaBasedTrigger
 
@@ -83,7 +83,7 @@ class StatsdConfig(SchemaBasedTrigger):
         'statsd': {
             Required('host', default='localhost'): basestring,
             Required('port', default=8125): Coerce(int),
-            Optional('sample_rate'): Coerce(int),
+            Optional('sample_rate'): All(Coerce(float), Range(min=0, max=1)),
             Optional('disabled'): Boolean(basestring),
         },
     })
