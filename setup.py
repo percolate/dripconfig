@@ -8,7 +8,7 @@ except ImportError:
 
 setup(
     name='dripconfig',
-    version='0.2.1',
+    version='0.2.2',
     description="configuration loading utilities for common process setup tasks",
     license="",
     author="Luke Tucker, James O'Beirne",

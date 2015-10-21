@@ -3,7 +3,7 @@
 
 ![build badge](https://circleci.com/gh/percolate/dripconfig.png?circle-token=80b53a2510ca246c448fd7e65c900b2102cc4e4a)
 
-A tool for doing configuration nicely -- currently in unstable alpha.
+A tool for doing configuration nicely -- sorta.
 
 This package has helpers for loading configuration and performing common setup
 tasks, e.g. for logging, stats, and datastore machinery. It provides a
@@ -119,28 +119,28 @@ but configuration can be merged together from a variety of sources including
 ini files, yamls, dicts etc.  A consolidated attribute-accessible object is
 presented for triggering further configuration actions.
 
-    ```
-    from dripconfig import config
+```
+from dripconfig import config
 
 
-    if __name__ == '__main__':
-        config.register_trigger(...)
- 
-        # `merge` will automagically determine the type
-        config.merge('thisconf.yaml')
-        config.merge({'yo': 'bang!'})
-                                     
-        # or you can do it explicitly
-        config.merge_dict({'some': 'default'})
-        config.merge_ini_file("/usr/local/etc/common.ini")
-        config.merge_json('{"foo": "bar"}')
+if __name__ == '__main__':
+    config.register_trigger(...)
 
-        # done loading, normalize and apply
-        config.configure()
+    # `merge` will automagically determine the type
+    config.merge('thisconf.yaml')
+    config.merge({'yo': 'bang!'})
+                                 
+    # or you can do it explicitly
+    config.merge_dict({'some': 'default'})
+    config.merge_ini_file("/usr/local/etc/common.ini")
+    config.merge_json('{"foo": "bar"}')
 
-        # great, now get to work!
-        serve(port=config.port)
-    ```
+    # done loading, normalize and apply
+    config.configure()
+
+    # great, now get to work!
+    serve(port=config.port)
+```
 
 ## Validation and Global Configuration
 
@@ -165,6 +165,33 @@ for the same reason and no magic to support nesting is done.  Anything in the
 [main] section is considered top-level, everything else is nested under a key
 with the name of the section.
  
+## Helpers and other Tidbits
+
+
+For logging configurations that use syslog, a slightly improved handler is
+provided that logs the process name with outgoing messages.
+
+An example configuration might include a handler such as the following in the
+logging.dictConfig format: 
+
+```
+{
+    "logging": {
+        ...
+        "handlers": {
+            "syslog":{
+                "class":"dripconfig.SysLogHandler",
+                "level":"INFO",
+                "formatter": "verbose",
+                "address": "/dev/log"
+            },
+        },
+        ...
+    }
+}
+```
+
+
 ## TODO
 
 * arg parse example or helper for specifying config files to load?
