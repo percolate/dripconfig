@@ -119,28 +119,28 @@ but configuration can be merged together from a variety of sources including
 ini files, yamls, dicts etc.  A consolidated attribute-accessible object is
 presented for triggering further configuration actions.
 
-    ```
-    from dripconfig import config
+```
+from dripconfig import config
 
 
-    if __name__ == '__main__':
-        config.register_trigger(...)
- 
-        # `merge` will automagically determine the type
-        config.merge('thisconf.yaml')
-        config.merge({'yo': 'bang!'})
-                                     
-        # or you can do it explicitly
-        config.merge_dict({'some': 'default'})
-        config.merge_ini_file("/usr/local/etc/common.ini")
-        config.merge_json('{"foo": "bar"}')
+if __name__ == '__main__':
+    config.register_trigger(...)
 
-        # done loading, normalize and apply
-        config.configure()
+    # `merge` will automagically determine the type
+    config.merge('thisconf.yaml')
+    config.merge({'yo': 'bang!'})
+                                 
+    # or you can do it explicitly
+    config.merge_dict({'some': 'default'})
+    config.merge_ini_file("/usr/local/etc/common.ini")
+    config.merge_json('{"foo": "bar"}')
 
-        # great, now get to work!
-        serve(port=config.port)
-    ```
+    # done loading, normalize and apply
+    config.configure()
+
+    # great, now get to work!
+    serve(port=config.port)
+```
 
 ## Validation and Global Configuration
 
