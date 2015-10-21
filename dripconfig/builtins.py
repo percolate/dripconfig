@@ -90,7 +90,12 @@ class StatsdConfig(SchemaBasedTrigger):
 
     def configure(self, configuration):
         import statsd
-        statsd.Connection.set_defaults(**configuration.get('statsd', {}))
+        statsd.Connection.set_defaults(
+            host=configuration.get('host'),
+            port=configuration.get('port'),
+            sample_rate=configuration.get('sample_rate', 1),
+            disabled=configuration.get('disabled', False)
+        )
 
 
 def register_all(config):
