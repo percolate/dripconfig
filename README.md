@@ -3,7 +3,7 @@
 
 ![build badge](https://circleci.com/gh/percolate/dripconfig.png?circle-token=80b53a2510ca246c448fd7e65c900b2102cc4e4a)
 
-A tool for doing configuration nicely -- currently in unstable alpha.
+A tool for doing configuration nicely -- sorta.
 
 This package has helpers for loading configuration and performing common setup
 tasks, e.g. for logging, stats, and datastore machinery. It provides a
@@ -165,6 +165,33 @@ for the same reason and no magic to support nesting is done.  Anything in the
 [main] section is considered top-level, everything else is nested under a key
 with the name of the section.
  
+## Helpers and other Tidbits
+
+
+For logging configurations that use syslog, a slightly improved handler is
+provided that logs the process name with outgoing messages.
+
+An example configuration might include a handler such as the following in the
+logging.dictConfig format: 
+
+```
+{
+    "logging": {
+        ...
+        "handlers": {
+            "syslog":{
+                "class":"dripconfig.SysLogHandler",
+                "level":"INFO",
+                "formatter": "verbose",
+                "address": "/dev/log"
+            },
+        },
+        ...
+    }
+}
+```
+
+
 ## TODO
 
 * arg parse example or helper for specifying config files to load?
