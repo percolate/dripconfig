@@ -25,4 +25,4 @@ __all__ = [
 
 config = ConfigDict()
 
-__version__ = '0.2.2'
+__version__ = '0.2.3'
