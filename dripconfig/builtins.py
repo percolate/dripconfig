@@ -91,8 +91,8 @@ class StatsdConfig(SchemaBasedTrigger):
     def configure(self, configuration):
         import statsd
         statsd.Connection.set_defaults(
-            host=configuration.get('host'),
-            port=configuration.get('port'),
+            host=configuration.get('host', 'localhost'),
+            port=configuration.get('port', 8125),
             sample_rate=configuration.get('sample_rate', 1),
             disabled=configuration.get('disabled', False)
         )
