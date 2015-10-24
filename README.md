@@ -169,7 +169,10 @@ with the name of the section.
 
 
 For logging configurations that use syslog, a slightly improved handler is
-provided that logs the process name with outgoing messages.
+provided that logs the process name with outgoing messages when used 
+with an appropriate formatter.  The variable `ident` is provided, which 
+can be used as the prefix to the logging format to identify the process
+to syslog eg `%(ident)s %(message)`.
 
 An example configuration might include a handler such as the following in the
 logging.dictConfig format: 
@@ -177,12 +180,18 @@ logging.dictConfig format:
 ```
 {
     "logging": {
+        "formatters": {
+            ...
+            "syslog": {
+                "format": "%(ident)s [%(levelname)s %(asctime)s %(module)s] %(message)s"
+            }
+        },
         ...
         "handlers": {
             "syslog":{
                 "class":"dripconfig.SysLogHandler",
                 "level":"INFO",
-                "formatter": "verbose",
+                "formatter": "syslog",
                 "address": "/dev/log"
             },
         },
