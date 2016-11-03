@@ -1,7 +1,11 @@
 from logging.handlers import SysLogHandler as _SysLogHandler
+from logging.handlers import DatagramHandler
+from logging import Filter
+
 from dripconfig.interfaces import ConfigurationTrigger
 import os
 import sys
+
 
 class SchemaTrigger(ConfigurationTrigger):
     """
@@ -17,6 +21,7 @@ class SchemaTrigger(ConfigurationTrigger):
 
     def configure(self, config):
         pass
+
 
 class SysLogHandler(_SysLogHandler):
     """
@@ -34,3 +39,48 @@ class SysLogHandler(_SysLogHandler):
     def emit(self, record):
         record.ident = os.path.basename(sys.argv[0])
         super(SysLogHandler, self).emit(record)
+
+
+class StatsdHandler(DatagramHandler):
+
+    def __init__(self, host, port):
+        super(StatsdHandler, self).__init__(host, port)
+
+    def _metric(self, record):
+        return 'errors.{}.{}.{}'.format(
+            record.name, record.levelname, record.funcName
+        )
+
+    def _prepare_increment(self, metric):
+        return '{}:1|c'.format(metric)
+
+    def emit(self, record):
+        """
+        Increment a statsd counter for the error that occurred.
+        """
+        try:
+            s = self._prepare_increment(self._metric(record))
+            self.send(s)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+
+
+class StatsdErrorFilter(Filter):
+    """
+    This filter ensures that only specific errors are reported to Graphite.
+    """
+
+    WHITELIST = [
+        ('kafka.consumer.fetcher', 'ERROR', '_call_backs'),
+        ('kafka.coordinator.consumer', 'ERROR', 'commit_offsets_sync'),
+        ('kafka.coordinator', 'ERROR', '__call__'),
+        ('kafka.coordinator', 'ERROR', '_failed_request'),
+        ('kafka.conn', 'ERROR', 'recv'),
+    ]
+
+    def filter(self, record):
+        if (record.name, record.levelname, record.funcName) in self.WHITELIST:
+            return True
+        return False
