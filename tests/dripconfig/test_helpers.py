@@ -61,7 +61,8 @@ class TestStatsdErrors(TestCase):
             handler.emit(self.record)
 
             self.assertEquals(send.call_count, 1)
-            self.assertIn('errors.name.ERROR.func_name', send.call_args_list[0][0][0])
+            self.assertIn(
+                'errors.name.ERROR.func_name', send.call_args_list[0][0][0])
 
     def test_StatdsErrorFilter_returns_False_if_error_not_in_WHITELIST(self):
         a_filter = StatsdErrorFilter()
