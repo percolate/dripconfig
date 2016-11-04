@@ -1,7 +1,7 @@
 
-# dripconfig 
+# dripconfig
 
-![build badge](https://circleci.com/gh/percolate/dripconfig.png?circle-token=80b53a2510ca246c448fd7e65c900b2102cc4e4a)
+[![CircleCI](https://circleci.com/gh/percolate/dripconfig.svg?style=svg&circle-token=80b53a2510ca246c448fd7e65c900b2102cc4e4a)](https://circleci.com/gh/percolate/dripconfig)
 
 A tool for doing configuration nicely -- sorta.
 
@@ -14,18 +14,18 @@ injection](http://en.wikipedia.org/wiki/Dependency_injection).
 
 Configuration can be loaded easily from  from a variety of sources in a
 seamless, polymorphic way and is checked/cleaned by registered validation
-extensions (usually by section). You can load from many different sources 
+extensions (usually by section). You can load from many different sources
 (JSON, INI, dict, environment variable to name a few), as well as specifying
 a prioritized preference for loading (load from sys.argv if available, then
 from environment variable, then finally fall back to a certain file).
 
 ## Example
- 
+
 ```python
 from dripconfig import config, sources
 
 if __name__ == '__main__':
-    
+
     # wire up a RedisTrigger instance to configure redis based on info
     config.register_trigger(RedisTrigger())
 
@@ -33,11 +33,11 @@ if __name__ == '__main__':
 
     config.merge_from(
         # prefer a config loaded from filename passed as argument
-        sources.Argv(1),  
+        sources.Argv(1),
         # if we don't have an argv, load from a file
-        sources.EnvVar("CONF_FILENAME"),  
+        sources.EnvVar("CONF_FILENAME"),
         # if the env var isn't set, fall back to a particular file
-        sources.Filename("some_conf.json"),  
+        sources.Filename("some_conf.json"),
     )
 
     # specific values can be loaded very easily from environment variables
@@ -90,8 +90,8 @@ class RedisTrigger(ConfigurationTrigger):
 ```
 
 Meanwhile in `some_submodule`, the module-level attribute `redis_client` is
-declared to be injected by dripconfig. This allows the module to be 
-(blissfully) unaware of the configuration needed to instantiate its 
+declared to be injected by dripconfig. This allows the module to be
+(blissfully) unaware of the configuration needed to instantiate its
 dependencies.
 
 ```python
@@ -100,10 +100,10 @@ dependencies.
 redis_client = dripconfig.ToBeInjected(redis.Redis)
 ```
 
-By the time `dripconfig.configure()` is called, `redis_client` will be an 
+By the time `dripconfig.configure()` is called, `redis_client` will be an
 object of type `redis.Redis`, and will be ready for use. Until that call is
 made, though, any attempt to use that object will result in a RuntimeError.
-                 
+
 
 ## Note on INI logging configurations
 
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     # `merge` will automagically determine the type
     config.merge('thisconf.yaml')
     config.merge({'yo': 'bang!'})
-                                 
+
     # or you can do it explicitly
     config.merge_dict({'some': 'default'})
     config.merge_ini_file("/usr/local/etc/common.ini")
@@ -164,18 +164,18 @@ The best thing is that they're simple. The worst thing is they sort of stink
 for the same reason and no magic to support nesting is done.  Anything in the
 [main] section is considered top-level, everything else is nested under a key
 with the name of the section.
- 
+
 ## Helpers and other Tidbits
 
 
 For logging configurations that use syslog, a slightly improved handler is
-provided that logs the process name with outgoing messages when used 
-with an appropriate formatter.  The variable `ident` is provided, which 
+provided that logs the process name with outgoing messages when used
+with an appropriate formatter.  The variable `ident` is provided, which
 can be used as the prefix to the logging format to identify the process
 to syslog eg `%(ident)s %(message)`.
 
 An example configuration might include a handler such as the following in the
-logging.dictConfig format: 
+logging.dictConfig format:
 
 ```
 {
@@ -207,4 +207,4 @@ logging.dictConfig format:
 * ? some way to do email based logging without django
 * json with comments is shady, works but can't give good line-number errors,
 which stinks
- 
+
