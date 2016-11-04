@@ -18,6 +18,8 @@ __all__ = [
     'EnvVar',
     'Filename',
     'SysLogHandler',
+    'StatsdHandler',
+    'StatsdErrorFilter',
     'ToBeInjected',
     'config'
 ]
@@ -25,4 +27,4 @@ __all__ = [
 
 config = ConfigDict()
 
-__version__ = '0.2.3'
+__version__ = '0.2.5'
