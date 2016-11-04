@@ -45,7 +45,8 @@ class TestStatsdErrors(TestCase):
 
     def setUp(self):
         self.whitelist = [
-            ('name', 'ERROR', 'func_name')
+            ['dummy_name', 'ERROR', 'not_used_func'],
+            ['name', 'ERROR', 'func_name']
         ]
 
         self.record = LogRecord(

@@ -70,9 +70,13 @@ class StatsdHandler(DatagramHandler):
 class StatsdErrorFilter(Filter):
     """
     This filter ensures that only specific errors are reported to Graphite.
+
+    :param list list strings: inject whitelisted error signatures
     """
 
     def __init__(self, whitelist):
+        for idx, item in enumerate(whitelist):
+            whitelist[idx] = tuple(item)
         self.WHITELIST = whitelist
         super(StatsdErrorFilter, self).__init__()
 
