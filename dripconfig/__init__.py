@@ -8,7 +8,7 @@ from .sources import (
     EnvVar,
     Filename,
 )
-from .helpers import SysLogHandler
+from .helpers import SysLogHandler, StatsdHandler, StatsdErrorFilter
 from .interfaces import ConfigurationTrigger, ToBeInjected
 
 __all__ = [
