@@ -44,6 +44,10 @@ class TestSysLogHelper(TestCase):
 class TestStatsdErrors(TestCase):
 
     def setUp(self):
+        self.whitelist = [
+            ('name', 'ERROR', 'func_name')
+        ]
+
         self.record = LogRecord(
             'name',
             logging.ERROR,
@@ -65,14 +69,11 @@ class TestStatsdErrors(TestCase):
                 'errors.name.ERROR.func_name', send.call_args_list[0][0][0])
 
     def test_StatdsErrorFilter_returns_False_if_error_not_in_WHITELIST(self):
-        a_filter = StatsdErrorFilter()
+        a_filter = StatsdErrorFilter([])  # pass in empty whitelist
         result = a_filter.filter(self.record)
         self.assertFalse(result)
 
     def test_StatdsErrorFilter_returns_True_if_error_in_WHITELIST(self):
-        a_filter = StatsdErrorFilter()
-        a_filter.WHITELIST = [
-            ('name', 'ERROR', 'func_name'),
-        ]
+        a_filter = StatsdErrorFilter(self.whitelist)
         result = a_filter.filter(self.record)
         self.assertTrue(result)

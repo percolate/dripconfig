@@ -72,13 +72,9 @@ class StatsdErrorFilter(Filter):
     This filter ensures that only specific errors are reported to Graphite.
     """
 
-    WHITELIST = [
-        ('kafka.consumer.fetcher', 'ERROR', '_call_backs'),
-        ('kafka.coordinator.consumer', 'ERROR', 'commit_offsets_sync'),
-        ('kafka.coordinator', 'ERROR', '__call__'),
-        ('kafka.coordinator', 'ERROR', '_failed_request'),
-        ('kafka.conn', 'ERROR', 'recv'),
-    ]
+    def __init__(self, whitelist):
+        self.WHITELIST = whitelist
+        super(StatsdErrorFilter, self).__init__()
 
     def filter(self, record):
         if (record.name, record.levelname, record.funcName) in self.WHITELIST:
