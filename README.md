@@ -198,6 +198,6 @@ logging.dictConfig format:
 ## TODO
 
 * arg parse example or helper for specifying config files to load?
-* ? some way to do email based logging without django
+* some way to do email based logging without django?
 * json with comments is shady, works but can't give good line-number errors,
   which stinks
