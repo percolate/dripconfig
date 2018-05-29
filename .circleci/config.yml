@@ -1,0 +1,33 @@
+version: 2
+
+workflows:
+  version: 2
+  dripconfig:
+    jobs:
+      - mdl
+      - install
+      - test
+
+jobs:
+
+  mdl:
+    docker:
+      - image: rsrchboy/mdl
+    steps:
+      - checkout
+      - run: mdl .
+
+  install:
+    docker:
+      - image: python:2.7
+    steps:
+      - checkout
+      - run: python setup.py install
+
+  test:
+    docker:
+      - image: python:2.7
+    steps:
+      - run: pip install nose
+      - checkout
+      - run: python setup.py test

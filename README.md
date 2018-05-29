@@ -11,7 +11,6 @@ django-like singleton to consolidate configured values. It also provides
 utilities for implementing lightweight [dependency
 injection](http://en.wikipedia.org/wiki/Dependency_injection).
 
-
 Configuration can be loaded easily from  from a variety of sources in a
 seamless, polymorphic way and is checked/cleaned by registered validation
 extensions (usually by section). You can load from many different sources
@@ -104,13 +103,11 @@ By the time `dripconfig.configure()` is called, `redis_client` will be an
 object of type `redis.Redis`, and will be ready for use. Until that call is
 made, though, any attempt to use that object will result in a RuntimeError.
 
-
 ## Note on INI logging configurations
 
 Note: this does not support the python logging module 'ini' configuration
 format although you can load ini files.  Use logging.fileConfig on that
 directly if desired.
-
 
 ## Sources
 
@@ -157,7 +154,6 @@ ConfigurationTriggers can also apply portions of the configuration in a global
 fashion if necesary via the configure() method.  Stats and logging are often
 configured by this method.
 
-
 ## Note on INI Files
 
 The best thing is that they're simple. The worst thing is they sort of stink
@@ -166,7 +162,6 @@ for the same reason and no magic to support nesting is done.  Anything in the
 with the name of the section.
 
 ## Helpers and other Tidbits
-
 
 For logging configurations that use syslog, a slightly improved handler is
 provided that logs the process name with outgoing messages when used
@@ -200,11 +195,9 @@ logging.dictConfig format:
 }
 ```
 
-
 ## TODO
 
 * arg parse example or helper for specifying config files to load?
-* ? some way to do email based logging without django
+* some way to do email based logging without django?
 * json with comments is shady, works but can't give good line-number errors,
-which stinks
-
+  which stinks
